@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  
+  --font-display: "Oswald", "Bebas Neue", sans-serif;
+  --radius: 0.875rem;
+  
+  /* Brand colors mapping */
+  --color-brand-red: oklch(55% .22 27);
+  --color-brand-red-foreground: oklch(99% 0 0);
+  --color-brand-navy: oklch(28% .13 265);
+  --color-brand-gold: oklch(78% .15 75);
+}
+
+:root {
+  --radius: 0.875rem;
+  --background: oklch(98.5% .003 240);
+  --foreground: oklch(18% .04 260);
+  
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(18% .04 260);
+  
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(18% .04 260);
+  
+  --primary: oklch(28% .13 265);
+  --primary-foreground: oklch(99% 0 0);
+  
+  --secondary: oklch(96% .01 250);
+  --secondary-foreground: oklch(22% .06 265);
+  
+  --muted: oklch(95% .008 250);
+  --muted-foreground: oklch(48% .03 260);
+  
+  --accent: oklch(78% .15 75);
+  --accent-foreground: oklch(18% .04 260);
+  
+  --destructive: oklch(55% .22 27);
+  --destructive-foreground: oklch(99% 0 0);
+  
+  --border: oklch(90% .012 250);
+  --input: oklch(92% .012 250);
+  --ring: oklch(55% .2 27);
+  
+  --brand-red: oklch(55% .22 27);
+  --brand-red-foreground: oklch(99% 0 0);
+  --brand-navy: oklch(28% .13 265);
+  --brand-gold: oklch(78% .15 75);
+  
+  --gradient-hero: linear-gradient(135deg, oklch(28% .13 265), oklch(22% .1 270));
+  --gradient-accent: linear-gradient(135deg, oklch(55% .22 27), oklch(62% .2 35));
+  
+  --shadow-soft: 0 2px 8px -2px oklch(28% .13 265 / 0.08), 0 4px 16px -4px oklch(28% .13 265 / 0.06);
+  --shadow-elegant: 0 10px 40px -10px oklch(28% .13 265 / 0.25);
+  --shadow-glow: 0 0 30px -5px oklch(55% .22 27 / 0.35);
+  
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Automize text animation variables */
+  --automize-g1: #0070f3;
+  --automize-g2: #7928ca;
+  --automize-g3: #ff0080;
+}
+
+.dark {
+  --background: oklch(12.9% .042 264.695);
+  --foreground: oklch(98.4% .003 247.858);
+  
+  --card: oklch(20.8% .042 265.755);
+  --card-foreground: oklch(98.4% .003 247.858);
+  
+  --popover: oklch(20.8% .042 265.755);
+  --popover-foreground: oklch(98.4% .003 247.858);
+  
+  --primary: oklch(92.9% .013 255.508);
+  --primary-foreground: oklch(20.8% .042 265.755);
+  
+  --secondary: oklch(27.9% .041 260.031);
+  --secondary-foreground: oklch(98.4% .003 247.858);
+  
+  --muted: oklch(27.9% .041 260.031);
+  --muted-foreground: oklch(70.4% .04 256.788);
+  
+  --accent: oklch(27.9% .041 260.031);
+  --accent-foreground: oklch(98.4% .003 247.858);
+  
+  --destructive: oklch(70.4% .191 22.216);
+  --destructive-foreground: oklch(98.4% .003 247.858);
+  
+  --border: oklch(100% 0 0 / 0.1);
+  --input: oklch(100% 0 0 / 0.15);
+  --ring: oklch(55.1% .027 264.364);
+
+  --automize-g1: #0070f3;
+  --automize-g2: #7928ca;
+  --automize-g3: #ff0080;
+}
+
+/* Base custom styles */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", system-ui, sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-display {
+  font-family: "Oswald", "Bebas Neue", sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Input Styles */
+.input {
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  width: 100%;
+  height: 2.75rem;
+  color: var(--foreground);
+  transition: var(--transition-smooth);
+  border-radius: 0.75rem;
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+}
+
+.input:focus {
+  border-color: var(--brand-red);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 12, 26, 0.15);
+}
+
+textarea.input {
+  resize: vertical;
+  height: auto;
+  padding: 0.75rem 0.875rem;
+  line-height: 1.5;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(18% .04 260 / 0.15);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(18% .04 260 / 0.3);
+}
+
+/* Glow on hover */
+.hover-glow:hover {
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.02);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float-gentle {
+  animation: floatGentle 3s ease-in-out infinite;
+}
+
+@keyframes textShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-automize-text {
+  background: linear-gradient(
+    120deg,
+    var(--automize-g1) 0%,
+    var(--automize-g2) 50%,
+    var(--automize-g3) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  animation: textShimmer 3s ease-in-out infinite;
+  display: inline-block;
+  font-weight: 700;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.animate-automize-text:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 4px var(--automize-g2));
+}
+
+/* Print CSS */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  header, footer, nav, button, aside, .no-print {
+    display: none !important;
+  }
+  .print-container {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Custom welcome animations for admin card */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+@keyframes floatDelayed {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(6px) rotate(-2deg); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-float-delayed {
+  animation: floatDelayed 6s ease-in-out infinite;
+}
