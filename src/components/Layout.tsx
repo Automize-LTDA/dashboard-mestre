@@ -49,16 +49,16 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const filteredNavItems = React.useMemo(() => {
     if (cargo === 'vendedor') {
       return [
-        { path: '/brindes', label: 'Solicitar Brindes', icon: Gift }
+        { path: '/brindes', label: 'Brindes', icon: Gift }
       ]
     }
     return [
       { path: '/', label: 'Dashboard', icon: Home },
       { path: '/relatorios', label: 'Relatórios', icon: FileText },
       { path: '/promotores', label: 'Promotores', icon: TrendingUp },
+      { path: '/brindes', label: 'Brindes', icon: Gift },
       { path: '/usuarios', label: 'Usuários', icon: Users },
       { path: '/empresas', label: 'Empresas', icon: Building2 },
-      { path: '/brindes', label: 'Solicitar Brindes', icon: Gift },
       { path: '/notificacoes', label: 'Notificações', icon: Bell }
     ]
   }, [cargo])
