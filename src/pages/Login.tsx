@@ -271,7 +271,7 @@ export const Login: React.FC = () => {
           {/* Link to Promoter Main Login */}
           <div className="pt-1 text-center">
             <a
-              href="http://localhost:5173/login"
+              href="https://domestre.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-[#E53935] hover:text-[#c62828] hover:underline transition-all"

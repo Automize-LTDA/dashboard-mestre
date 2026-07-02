@@ -1,13 +1,11 @@
 -- =========================================================================
--- SCRIPT DE SEGURANÇA E POLÍTICAS DE BANCO DE DADOS (RLS) - DO MESTRE
+-- SCRIPT DE SEGURANÇA E POLÍTICAS (RLS) - COMPARTILHADO (DASHBOARD + SITE)
 -- =========================================================================
 -- Instruções: Copie todo o código abaixo, acesse o painel do Supabase,
 -- vá em "SQL Editor", crie uma nova query, cole o código e clique em "Run".
 
 -- -------------------------------------------------------------------------
 -- 1. HABILITAR ROW LEVEL SECURITY (RLS) EM TODAS AS TABELAS
--- Por padrão, sem RLS, qualquer pessoa com a anon_key pode ler/escrever.
--- Habilitar RLS bloqueia o acesso não autorizado por padrão.
 -- -------------------------------------------------------------------------
 
 ALTER TABLE public.usuarios ENABLE ROW LEVEL SECURITY;
@@ -21,8 +19,7 @@ ALTER TABLE public.relatorios_visitas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.solicitacoes_brindes ENABLE ROW LEVEL SECURITY;
 
 -- -------------------------------------------------------------------------
--- 2. FUNÇÃO AUXILIAR PARA CHECAR CARGO DO USUÁRIO CONECTADO
--- Retorna se o usuário atual é administrador, gestor ou supervisor.
+-- 2. FUNÇÃO AUXILIAR PARA CHECAR SE O USUÁRIO É GESTOR
 -- -------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION public.check_user_is_manager()
@@ -41,32 +38,36 @@ $$ LANGUAGE plpgsql;
 -- 3. POLÍTICAS PARA A TABELA: usuarios
 -- -------------------------------------------------------------------------
 
--- Qualquer usuário autenticado pode ler cargos de usuários (necessário para login/verificação)
+-- Todos os autenticados podem visualizar a lista de usuários
 CREATE POLICY "Permitir leitura de usuários para autenticados" 
 ON public.usuarios FOR SELECT 
 TO authenticated 
 USING (true);
 
--- Apenas administradores/gestores podem modificar usuários
-CREATE POLICY "Permitir escrita de usuários para administradores" 
+-- Permite que o próprio usuário insira ou atualize seus dados de status/cargo, ou que gestores o façam
+CREATE POLICY "Permitir inserção e atualização pelo próprio ou gestores" 
 ON public.usuarios FOR ALL 
 TO authenticated 
-USING (public.check_user_is_manager())
-WITH CHECK (public.check_user_is_manager());
+USING (auth.uid() = id OR public.check_user_is_manager())
+WITH CHECK (auth.uid() = id OR public.check_user_is_manager());
 
 -- -------------------------------------------------------------------------
 -- 4. POLÍTICAS PARA A TABELA: profiles
 -- -------------------------------------------------------------------------
 
--- Todos os usuários autenticados podem ver perfis
-CREATE POLICY "Permitir leitura de perfis para autenticados" 
+-- Qualquer usuário (mesmo público/anon do site principal) pode ler perfis públicos se necessário
+CREATE POLICY "Permitir leitura de perfis pública" 
 ON public.profiles FOR SELECT 
-TO authenticated 
 USING (true);
 
--- O próprio usuário pode atualizar o seu perfil, ou administradores
-CREATE POLICY "Permitir escrita de perfis para donos ou administradores" 
-ON public.profiles FOR ALL 
+-- Permite criação de perfil para qualquer um (necessário no fluxo de cadastro/signup do site)
+CREATE POLICY "Permitir criação de perfil pública" 
+ON public.profiles FOR INSERT 
+WITH CHECK (true);
+
+-- Apenas o próprio usuário ou gestores podem atualizar seu perfil
+CREATE POLICY "Permitir atualização de perfil pelo dono ou gestores" 
+ON public.profiles FOR UPDATE 
 TO authenticated 
 USING (auth.uid() = id OR public.check_user_is_manager())
 WITH CHECK (auth.uid() = id OR public.check_user_is_manager());
@@ -90,8 +91,13 @@ WITH CHECK (public.check_user_is_manager());
 -- 6. POLÍTICAS PARA A TABELA: empresas
 -- -------------------------------------------------------------------------
 
--- Apenas administradores e gestores visualizam ou editam empresas
-CREATE POLICY "Acesso completo a empresas para administradores" 
+-- Permite leitura pública de empresas (essencial se o site principal listar os parceiros/clientes)
+CREATE POLICY "Permitir leitura pública de empresas" 
+ON public.empresas FOR SELECT 
+USING (true);
+
+-- Apenas administradores e gestores podem inserir, atualizar ou excluir empresas
+CREATE POLICY "Permitir escrita de empresas apenas para gestores" 
 ON public.empresas FOR ALL 
 TO authenticated 
 USING (public.check_user_is_manager())
@@ -101,13 +107,36 @@ WITH CHECK (public.check_user_is_manager());
 -- 7. POLÍTICAS PARA A TABELA: relatorios_avarias E relatorios_visitas
 -- -------------------------------------------------------------------------
 
-CREATE POLICY "Acesso a relatorios_avarias para administradores" 
+-- Todos os usuários conectados (como promotores/funcionários) podem visualizar e inserir relatórios
+CREATE POLICY "Permitir leitura de avarias para autenticados" 
+ON public.relatorios_avarias FOR SELECT 
+TO authenticated 
+USING (true);
+
+CREATE POLICY "Permitir inserção de avarias para autenticados" 
+ON public.relatorios_avarias FOR INSERT 
+TO authenticated 
+WITH CHECK (true);
+
+-- Apenas gestores podem atualizar ou excluir relatórios de avarias
+CREATE POLICY "Permitir modificação de avarias apenas para gestores" 
 ON public.relatorios_avarias FOR ALL 
 TO authenticated 
 USING (public.check_user_is_manager())
 WITH CHECK (public.check_user_is_manager());
 
-CREATE POLICY "Acesso a relatorios_visitas para administradores" 
+-- Mesma lógica para relatórios de visitas
+CREATE POLICY "Permitir leitura de visitas para autenticados" 
+ON public.relatorios_visitas FOR SELECT 
+TO authenticated 
+USING (true);
+
+CREATE POLICY "Permitir inserção de visitas para autenticados" 
+ON public.relatorios_visitas FOR INSERT 
+TO authenticated 
+WITH CHECK (true);
+
+CREATE POLICY "Permitir modificação de visitas apenas para gestores" 
 ON public.relatorios_visitas FOR ALL 
 TO authenticated 
 USING (public.check_user_is_manager())
@@ -117,21 +146,18 @@ WITH CHECK (public.check_user_is_manager());
 -- 8. POLÍTICAS PARA A TABELA: notificacoes
 -- -------------------------------------------------------------------------
 
--- Qualquer usuário conectado pode ler notificações
 CREATE POLICY "Permitir leitura de notificações para autenticados" 
 ON public.notificacoes FOR SELECT 
 TO authenticated 
 USING (true);
 
--- Qualquer usuário conectado pode inserir notificações (como o log de envio)
 CREATE POLICY "Permitir inserção de notificações para autenticados" 
 ON public.notificacoes FOR INSERT 
 TO authenticated 
 WITH CHECK (true);
 
--- Apenas administradores podem atualizar ou apagar notificações
-CREATE POLICY "Permitir atualização/exclusão para administradores" 
-ON public.notificacoes FOR UPDATE 
+CREATE POLICY "Permitir modificação de notificações apenas para gestores" 
+ON public.notificacoes FOR ALL 
 TO authenticated 
 USING (public.check_user_is_manager())
 WITH CHECK (public.check_user_is_manager());
@@ -140,14 +166,12 @@ WITH CHECK (public.check_user_is_manager());
 -- 9. POLÍTICAS PARA A TABELA: logs_acesso
 -- -------------------------------------------------------------------------
 
--- Todos podem gravar logs
-CREATE POLICY "Permitir gravação de logs" 
+CREATE POLICY "Permitir gravação de logs para autenticados" 
 ON public.logs_acesso FOR INSERT 
 TO authenticated 
 WITH CHECK (true);
 
--- Apenas administradores podem visualizar ou gerenciar logs
-CREATE POLICY "Permitir leitura/escrita de logs para administradores" 
+CREATE POLICY "Permitir gerenciamento de logs apenas para gestores" 
 ON public.logs_acesso FOR ALL 
 TO authenticated 
 USING (public.check_user_is_manager())
@@ -157,7 +181,7 @@ WITH CHECK (public.check_user_is_manager());
 -- 10. POLÍTICAS PARA A TABELA: solicitacoes_brindes
 -- -------------------------------------------------------------------------
 
--- Vendedores podem visualizar, criar e gerenciar suas próprias solicitações de brindes
+-- Vendedores gerenciam seus próprios brindes; gestores gerenciam todos
 CREATE POLICY "Vendedores gerenciam seus próprios brindes" 
 ON public.solicitacoes_brindes FOR ALL 
 TO authenticated 
