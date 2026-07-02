@@ -261,7 +261,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </nav>
 
         {/* Sidebar Footer: Sair */}
-        <div className="p-4 border-t border-slate-700/40 bg-[#172449]">
+        <div className="p-4 border-t border-slate-700/40 bg-[#172449] flex flex-col gap-2">
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-xs font-bold text-rose-200 hover:text-white hover:bg-rose-600/20 transition-all cursor-pointer"
@@ -269,6 +269,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <LogOut size={16} className="text-rose-300" />
             <span>Sair do Sistema</span>
           </button>
+          <div className="text-[9px] text-center text-slate-500 font-mono tracking-wider pt-1">
+            Versão v1.01
+          </div>
         </div>
       </aside>
 
@@ -505,7 +508,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </nav>
 
             {/* User Profile Info Footer */}
-            <div className="p-4 border-t border-slate-700/40 bg-[#172449] space-y-4">
+            <div className="p-4 border-t border-slate-700/40 bg-[#172449] space-y-3">
               <div className="flex items-center gap-3 px-3">
                 <div className="h-9 w-9 rounded-lg bg-[#E53935] text-white flex items-center justify-center font-bold text-xs">
                   {initials}
@@ -526,6 +529,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <LogOut size={16} />
                 <span>Sair do Sistema</span>
               </button>
+              <div className="text-[9px] text-center text-slate-500 font-mono tracking-wider pt-1">
+                Versão v1.01
+              </div>
             </div>
           </div>
         </div>
