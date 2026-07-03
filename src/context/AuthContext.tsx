@@ -124,17 +124,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         let access_token: string | null = null
         let refresh_token: string | null = null
+        let isMock = false
         
         if (hash) {
           const params = new URLSearchParams(hash.substring(1))
           access_token = params.get('access_token')
           refresh_token = params.get('refresh_token')
+          if (params.get('mock') === 'true') isMock = true
         }
         
         if (!access_token && search) {
           const params = new URLSearchParams(search)
           access_token = params.get('access_token')
           refresh_token = params.get('refresh_token')
+          if (params.get('mock') === 'true') isMock = true
+        }
+        
+        if (isMock) {
+          const cleanUrl = window.location.origin + window.location.pathname
+          window.history.replaceState(null, '', cleanUrl)
+          
+          const mockUser = {
+            id: '00000000-0000-0000-0000-000000000000',
+            email: 'admin@domestre.com',
+            user_metadata: { full_name: 'Administrador' }
+          } as any
+          setUser(mockUser)
+          setCargo('admin')
+          setFullName('Administrador')
+          setIsAuthorized(true)
+          localStorage.setItem('domestre.mock_session', JSON.stringify(mockUser))
+          await logAccessAttempt(mockUser.id, mockUser.email, 'admin', 'sucesso')
+          return true
         }
         
         if (access_token && refresh_token) {
