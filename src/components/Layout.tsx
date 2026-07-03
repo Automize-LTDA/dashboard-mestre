@@ -210,7 +210,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex text-slate-800 antialiased font-sans">
+    <div className="min-h-screen bg-slate-50 flex text-slate-800 antialiased font-sans overflow-x-hidden w-full max-w-full">
       
       {/* ========================================================
           SIDEBAR (Desktop)

@@ -428,7 +428,7 @@ export const DashboardHome: React.FC = () => {
                 : 'border-transparent text-slate-400 hover:text-slate-600'
             }`}
           >
-            📊 Promotores & Relatórios
+            Promotores & Relatórios
           </button>
           <button
             onClick={() => setActiveTab('brindes')}
@@ -438,7 +438,7 @@ export const DashboardHome: React.FC = () => {
                 : 'border-transparent text-slate-400 hover:text-slate-600'
             }`}
           >
-            🎁 Brindes & Campanhas
+            Brindes & Campanhas
           </button>
         </div>
 
@@ -533,7 +533,7 @@ export const DashboardHome: React.FC = () => {
             {/* CHARTS CONTAINER (6 Charts) */}
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Chart 1: Relatórios por Dia (Area Chart) */}
-              <div className="lg:col-span-2 bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px]">
+              <div className="lg:col-span-2 bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px] w-full min-w-0 overflow-hidden">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">
                     Relatórios por Dia (Evolução 7 dias)
@@ -563,7 +563,7 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               {/* Chart 2: Status dos Relatórios (Donut Chart) */}
-              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px]">
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px] w-full min-w-0 overflow-hidden">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">
                     Status dos Relatórios
@@ -601,7 +601,7 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               {/* Chart 3: Relatórios por Empresa (Horizontal Bar Chart) */}
-              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px]">
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px] w-full min-w-0 overflow-hidden">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">
                     Relatórios por Empresa
@@ -630,7 +630,7 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               {/* Chart 4: Relatórios por Responsável (Pie Chart) */}
-              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px]">
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px] w-full min-w-0 overflow-hidden">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">
                     Relatórios por Responsável
@@ -663,7 +663,7 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               {/* Chart 5: Relatórios por Mês (Vertical Bar Chart) */}
-              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px]">
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px] w-full min-w-0 overflow-hidden">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">
                     Distribuição Mensal
@@ -684,7 +684,7 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               {/* Chart 6: Evolução Mensal da Operação (Line Chart) */}
-              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px]">
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col justify-between min-h-[350px] w-full min-w-0 overflow-hidden">
                 <div>
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">
                     Curva de Crescimento
@@ -811,7 +811,7 @@ export const DashboardHome: React.FC = () => {
             {/* BRINDES CHARTS GRID */}
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Chart G: Brindes por Tipo */}
-              <div className="lg:col-span-1 bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col min-h-[340px]">
+              <div className="lg:col-span-1 bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col min-h-[340px] w-full min-w-0 overflow-hidden">
                 <div className="mb-4">
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">Brindes por Tipo</h3>
                   <p className="text-[10px] text-slate-400">Quantidade total solicitada por item.</p>
@@ -838,7 +838,7 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               {/* Chart H: Status Brindes */}
-              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col min-h-[340px]">
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col min-h-[340px] w-full min-w-0 overflow-hidden">
                 <div className="mb-4">
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">Status das Solicitações</h3>
                   <p className="text-[10px] text-slate-400">Distribuição por situação atual dos pedidos.</p>
@@ -874,7 +874,7 @@ export const DashboardHome: React.FC = () => {
               </div>
 
               {/* Chart I: Evolução de Solicitações por Mês */}
-              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col min-h-[340px]">
+              <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col min-h-[340px] w-full min-w-0 overflow-hidden">
                 <div className="mb-4">
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">Evolução Mensal de Brindes</h3>
                   <p className="text-[10px] text-slate-400">Número de solicitações abertas a cada mês.</p>
