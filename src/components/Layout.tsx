@@ -509,16 +509,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* User Profile Info Footer */}
             <div className="p-4 border-t border-slate-700/40 bg-[#172449] space-y-3">
-              <div className="flex items-center gap-3 px-3">
-                <div className="h-9 w-9 rounded-lg bg-[#E53935] text-white flex items-center justify-center font-bold text-xs">
-                  {initials}
-                </div>
-                <div className="leading-tight">
-                  <div className="text-xs font-bold text-white truncate max-w-[150px]">{fullName}</div>
-                  <div className="text-[9px] uppercase tracking-wider text-slate-300 font-extrabold pt-0.5">{getCargoLabel(cargo)}</div>
-                </div>
-              </div>
-              
               <button
                 onClick={() => {
                   setMobileMenuOpen(false)
