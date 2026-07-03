@@ -70,6 +70,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [notifications, setNotifications] = useState<DbNotification[]>([])
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false)
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
   const [hasNotifTable, setHasNotifTable] = useState(false)
   const [selectedNotif, setSelectedNotif] = useState<DbNotification | null>(null)
 
@@ -418,21 +419,66 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
 
             {/* Profile Avatar / Dropdown */}
-            <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
-              <div className="text-right leading-tight hidden sm:block">
-                <div className="text-xs font-bold text-slate-800 flex items-center gap-1 justify-end">
-                  <ShieldCheck size={13} className="text-[#E53935]" />
-                  {fullName}
+            <div className="relative">
+              <button
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="flex items-center gap-3 pl-3 border-l border-slate-200 hover:opacity-90 transition-all cursor-pointer text-left"
+                aria-haspopup="true"
+                aria-expanded={profileDropdownOpen}
+              >
+                <div className="text-right leading-tight hidden sm:block">
+                  <div className="text-xs font-bold text-slate-800 flex items-center gap-1 justify-end">
+                    <ShieldCheck size={13} className="text-[#E53935]" />
+                    {fullName}
+                  </div>
+                  <div className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold pt-0.5">
+                    {getCargoLabel(cargo)}
+                  </div>
                 </div>
-                <div className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold pt-0.5">
-                  {getCargoLabel(cargo)}
-                </div>
-              </div>
 
-              {/* Colored Avatar */}
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#233A7A] to-[#1E2E5C] text-white flex items-center justify-center font-bold text-xs shadow-inner">
-                {initials}
-              </div>
+                {/* Colored Avatar */}
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#233A7A] to-[#1E2E5C] text-white flex items-center justify-center font-bold text-xs shadow-inner shrink-0">
+                  {initials}
+                </div>
+              </button>
+
+              {profileDropdownOpen && (
+                <>
+                  {/* Backdrop to close dropdown */}
+                  <div className="fixed inset-0 z-40" onClick={() => setProfileDropdownOpen(false)} />
+                  
+                  {/* Dropdown Card */}
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden animate-fade-in-up origin-top-right">
+                    <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                      <p className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <ShieldCheck size={13} className="text-[#E53935]" />
+                        {fullName}
+                      </p>
+                      <p className="text-[9px] uppercase tracking-wider text-slate-400 font-extrabold mt-1">
+                        {getCargoLabel(cargo)}
+                      </p>
+                      {user?.email && (
+                        <p className="text-[9px] text-slate-400 font-medium mt-0.5 truncate" title={user.email}>
+                          {user.email}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="p-1.5">
+                      <button
+                        onClick={() => {
+                          setProfileDropdownOpen(false)
+                          handleLogout()
+                        }}
+                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-all cursor-pointer text-left"
+                      >
+                        <LogOut size={14} className="text-rose-500" />
+                        <span>Sair do Sistema</span>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
           </div>
