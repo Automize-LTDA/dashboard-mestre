@@ -21,40 +21,27 @@ import {
   Calendar
 } from 'lucide-react'
 
-import canetaImg from '../assets/caneta-mestre.png'
+import canetaImg from '../assets/brinde_caneta.png'
 import boneImg from '../assets/bone-mestre.png'
-import camisetaImg from '../assets/camiseta-mestre.png'
-import cadernoImg from '../assets/caderno-mestre.png'
-import copoImg from '../assets/copo-mestre.png'
+import cadernoImg from '../assets/brinde_caderneta.png'
+import chaveiroImg from '../assets/brinde_chaveiro.png'
 
 export const BRINDES_DETAILS: Record<string, { image: string, desc: string }> = {
   'Caneta Ecológica': {
     image: canetaImg,
-    desc: 'Caneta ecológica de bambu de alta qualidade com escrita macia e gravação a laser da marca Do Mestre.'
+    desc: 'Caneta de metal de alta qualidade com escrita macia e gravação da marca Do Mestre.'
   },
   'Boné Bordado': {
     image: boneImg,
-    desc: 'Boné premium estilo trucker preto com bordado de alta definição em relevo da marca Do Mestre.'
+    desc: 'Boné premium estilo trucker preto com mascote bordado de alta definição da marca Do Mestre.'
   },
-  'Camiseta Do Mestre': {
-    image: camisetaImg,
-    desc: 'Camisa polo dry-fit azul marinho com alta durabilidade e caimento impecável, ideal para visitas comerciais.'
-  },
-  'Caderno de Anotações': {
+  'Caderneta Do Mestre': {
     image: cadernoImg,
-    desc: 'Caderno de anotações luxo com capa de couro marinho/marrom gravado em baixo relevo.'
-  },
-  'Copo Térmico': {
-    image: copoImg,
-    desc: 'Copo térmico de inox com isolamento a vácuo de dupla parede, tampa antivazamento e acabamento preto fosco.'
+    desc: 'Caderneta de anotações estilo moleskine preto com mascote da marca Do Mestre impresso.'
   },
   'Chaveiro Abridor': {
-    image: canetaImg,
-    desc: 'Chaveiro abridor de garrafas robusto com acabamento em metal escovado e logotipo gravado.'
-  },
-  'Sacola Ecológica (Tote Bag)': {
-    image: cadernoImg,
-    desc: 'Sacola ecológica tipo ecobag em algodão cru reforçado com estampa silk da marca.'
+    image: chaveiroImg,
+    desc: 'Chaveiro de metal com acabamento escovado e logotipo do mascote Do Mestre.'
   }
 }
 
@@ -83,11 +70,8 @@ interface CompanyItem {
 const BRINDES_PADROES = [
   'Caneta Ecológica',
   'Boné Bordado',
-  'Camiseta Do Mestre',
-  'Caderno de Anotações',
-  'Copo Térmico',
+  'Caderneta Do Mestre',
   'Chaveiro Abridor',
-  'Sacola Ecológica (Tote Bag)',
   'Outro (especificar)'
 ]
 
