@@ -681,13 +681,15 @@ export const SolicitacaoBrindes: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                     {filteredRequests.map(item => {
-                      const isPending = item.status === 'pendente'
-                      const isSent = item.status === 'enviado' || item.status === 'aprovado' || item.status === 'entregue'
+                      const statusLower = item.status?.toLowerCase() || ''
+                      const isPending = statusLower === 'pendente' || statusLower === 'aguardando'
+                      const isSent = statusLower === 'enviado' || statusLower === 'aprovado' || statusLower === 'entregue'
+                      const isRecusado = statusLower === 'recusado'
                       
                       let statusColor = 'bg-slate-100 border-slate-200 text-slate-600'
-                      if (item.status === 'pendente') statusColor = 'bg-amber-50 border-amber-100 text-amber-600'
+                      if (isPending) statusColor = 'bg-amber-50 border-amber-100 text-amber-600'
                       if (isSent) statusColor = 'bg-emerald-50 border-emerald-100 text-emerald-600'
-                      if (item.status === 'recusado') statusColor = 'bg-rose-50 border-rose-100 text-rose-600'
+                      if (isRecusado) statusColor = 'bg-rose-50 border-rose-100 text-rose-600'
 
                       return (
                         <tr 
@@ -760,10 +762,10 @@ export const SolicitacaoBrindes: React.FC = () => {
                           <td className="p-4">
                             <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-bold text-[9px] uppercase border ${statusColor}`}>
                               <span className={`h-1.5 w-1.5 rounded-full ${
-                                item.status === 'pendente' ? 'bg-amber-500' :
+                                isPending ? 'bg-amber-500' :
                                 isSent ? 'bg-emerald-500' : 'bg-rose-500'
                               }`} />
-                              {item.status === 'pendente' ? 'Pendente' : 
+                              {isPending ? 'Pendente' : 
                                isSent ? 'Entregue' : 'Recusado'}
                             </span>
                           </td>
@@ -799,11 +801,14 @@ export const SolicitacaoBrindes: React.FC = () => {
               <div className="block lg:hidden p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {filteredRequests.map(item => {
-                    const isSent = item.status === 'enviado' || item.status === 'aprovado' || item.status === 'entregue'
+                    const statusLower = item.status?.toLowerCase() || ''
+                    const isPending = statusLower === 'pendente' || statusLower === 'aguardando'
+                    const isSent = statusLower === 'enviado' || statusLower === 'aprovado' || statusLower === 'entregue'
+                    const isRecusado = statusLower === 'recusado'
                     
                     let statusColor = 'bg-slate-100 border-slate-200 text-slate-600'
                     let dotColor = 'bg-slate-500'
-                    if (item.status === 'pendente') {
+                    if (isPending) {
                       statusColor = 'bg-amber-50 border-amber-100 text-amber-600'
                       dotColor = 'bg-amber-500'
                     }
@@ -811,7 +816,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                       statusColor = 'bg-emerald-50 border-emerald-100 text-emerald-600'
                       dotColor = 'bg-emerald-500'
                     }
-                    if (item.status === 'recusado') {
+                    if (isRecusado) {
                       statusColor = 'bg-rose-50 border-rose-100 text-rose-600'
                       dotColor = 'bg-rose-500'
                     }
@@ -820,12 +825,12 @@ export const SolicitacaoBrindes: React.FC = () => {
                       <div 
                         key={item.id} 
                         onClick={() => {
-                          if (!isVendedor && item.status === 'pendente') {
+                          if (!isVendedor && isPending) {
                             openActionModal(item)
                           }
                         }}
                         className={`bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-3 ${
-                          (!isVendedor && item.status === 'pendente') ? 'cursor-pointer hover:border-amber-250 bg-amber-50/5' : ''
+                          (!isVendedor && isPending) ? 'cursor-pointer hover:border-amber-250 bg-amber-50/5' : ''
                         }`}
                       >
                         {/* Header: Date & Status */}
@@ -836,7 +841,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                           </span>
                           <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-bold text-[9px] uppercase border ${statusColor}`}>
                             <span className={`h-1.5 w-1.5 rounded-full ${dotColor}`} />
-                            {item.status === 'pendente' ? 'Pendente' : 
+                            {isPending ? 'Pendente' : 
                              isSent ? 'Entregue' : 'Recusado'}
                           </span>
                         </div>
@@ -896,7 +901,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                         )}
 
                         {/* Mobile Action Button for Admin */}
-                        {!isVendedor && item.status === 'pendente' && (
+                        {!isVendedor && isPending && (
                           <div className="border-t border-slate-100 pt-3 mt-1">
                             <button
                               type="button"
