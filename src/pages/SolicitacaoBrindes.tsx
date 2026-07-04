@@ -675,11 +675,11 @@ export const SolicitacaoBrindes: React.FC = () => {
                       <th className="p-4">Justificativa</th>
                       <th className="p-4">Status</th>
                       <th className="p-4">Obs. Adm</th>
+                      {!isVendedor && <th className="p-4 text-center">Ações</th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                     {filteredRequests.map(item => {
-                      const isPending = item.status === 'pendente'
                       const isSent = item.status === 'enviado' || item.status === 'aprovado' || item.status === 'entregue'
                       
                       let statusColor = 'bg-slate-100 border-slate-200 text-slate-600'
@@ -691,12 +691,12 @@ export const SolicitacaoBrindes: React.FC = () => {
                         <tr 
                           key={item.id} 
                           onClick={() => {
-                            if (!isVendedor && isPending) {
+                            if (!isVendedor) {
                               openActionModal(item)
                             }
                           }}
                           className={`transition-colors group ${
-                            (!isVendedor && isPending) 
+                            !isVendedor 
                               ? 'hover:bg-amber-50/20 cursor-pointer' 
                               : 'hover:bg-slate-50/50'
                           }`}
@@ -771,6 +771,17 @@ export const SolicitacaoBrindes: React.FC = () => {
                             {item.observacao_admin || <span className="italic text-slate-300">—</span>}
                           </td>
 
+                          {!isVendedor && (
+                            <td className="p-4 text-center" onClick={e => e.stopPropagation()}>
+                              <button
+                                onClick={() => openActionModal(item)}
+                                className="px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#233A7A] hover:bg-[#233A7A]/95 transition-all shadow-sm shadow-[#233A7A]/20 cursor-pointer"
+                              >
+                                Decidir
+                              </button>
+                            </td>
+                          )}
+
                         </tr>
                       )
                     })}
@@ -782,7 +793,6 @@ export const SolicitacaoBrindes: React.FC = () => {
               <div className="block lg:hidden p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {filteredRequests.map(item => {
-                    const isPending = item.status === 'pendente'
                     const isSent = item.status === 'enviado' || item.status === 'aprovado' || item.status === 'entregue'
                     
                     let statusColor = 'bg-slate-100 border-slate-200 text-slate-600'
@@ -804,12 +814,12 @@ export const SolicitacaoBrindes: React.FC = () => {
                       <div 
                         key={item.id} 
                         onClick={() => {
-                          if (!isVendedor && isPending) {
+                          if (!isVendedor) {
                             openActionModal(item)
                           }
                         }}
                         className={`bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-3 ${
-                          (!isVendedor && isPending) ? 'cursor-pointer hover:border-amber-250 bg-amber-50/5' : ''
+                          !isVendedor ? 'cursor-pointer hover:border-amber-250 bg-amber-50/5' : ''
                         }`}
                       >
                         {/* Header: Date & Status */}
@@ -878,6 +888,22 @@ export const SolicitacaoBrindes: React.FC = () => {
                             )}
                           </div>
                         )}
+
+                        {/* Mobile Action Button for Admin */}
+                        {!isVendedor && (
+                          <div className="border-t border-slate-100 pt-3 mt-1">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openActionModal(item);
+                              }}
+                              className="px-3 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#233A7A] hover:bg-[#233A7A]/90 transition-all shadow-sm w-full text-center cursor-pointer"
+                            >
+                              Decidir
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )
                   })}
@@ -892,8 +918,8 @@ export const SolicitacaoBrindes: React.FC = () => {
             ======================================================== */}
         {showNewRequestModal && (
           <div className="fixed inset-0 z-[200] overflow-y-auto bg-white/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="flex min-h-full items-center justify-center p-4">
-              <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
+              <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl animate-in zoom-in-95 duration-200 my-auto">
               
               <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
                 <div>
@@ -1019,8 +1045,8 @@ export const SolicitacaoBrindes: React.FC = () => {
             ======================================================== */}
         {showActionModal && selectedRequestForAction && (
           <div className="fixed inset-0 z-[200] overflow-y-auto bg-white/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="flex min-h-full items-center justify-center p-4">
-              <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
+              <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl animate-in zoom-in-95 duration-200 my-auto">
               
               <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
                 <div>
