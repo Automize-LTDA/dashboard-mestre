@@ -84,7 +84,7 @@ export const App: React.FC = () => {
                 } />
                 
                 <Route path="/brindes" element={
-                  <RouteGuard allowedRoles={['admin', 'gestor', 'sup_tecnico']}>
+                  <RouteGuard allowedRoles={['admin', 'gestor', 'sup_tecnico', 'vendedor']}>
                     <SolicitacaoBrindes />
                   </RouteGuard>
                 } />

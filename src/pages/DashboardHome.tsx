@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../supabaseClient'
 import { Layout } from '../components/Layout'
 import { StatCard } from '../components/StatCard'
+import { useAuth } from '../context/AuthContext'
+import { Navigate } from 'react-router-dom'
 
 import { 
   FileText, 
@@ -34,8 +36,12 @@ import {
 } from 'recharts'
 
 export const DashboardHome: React.FC = () => {
+  const { cargo } = useAuth()
   const [activeTab, setActiveTab] = useState<'promotores' | 'brindes'>('promotores')
 
+  if (cargo === 'vendedor') {
+    return <Navigate to="/brindes" replace />
+  }
 
   const { data: dashboardData, isLoading } = useQuery({
     queryKey: ['dashboard-metrics'],
