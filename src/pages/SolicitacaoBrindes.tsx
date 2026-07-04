@@ -327,6 +327,21 @@ export const SolicitacaoBrindes: React.FC = () => {
           .eq('id', selectedRequestForAction.id)
         
         if (error) throw error
+
+        // Enviar notificação direcionada ao promotor/vendedor solicitante
+        try {
+          await supabase
+            .from('notificacoes')
+            .insert({
+              user_id: selectedRequestForAction.user_id,
+              titulo: dbStatus === 'aprovado' ? 'Solicitação de Brinde Aprovada! 🎁' : 'Solicitação de Brinde Recusada ❌',
+              mensagem: `Sua solicitação de ${selectedRequestForAction.quantidade}x "${selectedRequestForAction.brinde_tipo}" foi ${dbStatus === 'aprovado' ? 'aprovada' : 'recusada'}. ${actionObservation.trim() ? `Obs: ${actionObservation.trim()}` : ''}`,
+              tipo: dbStatus === 'aprovado' ? 'sucesso' : 'erro',
+              lida: false
+            })
+        } catch (notifErr) {
+          console.warn('Erro ao criar registro de notificação:', notifErr)
+        }
       } else {
         const localData = localStorage.getItem('domestre.solicitacoes_brindes')
         const items: SolicitacaoItem[] = localData ? JSON.parse(localData) : []
