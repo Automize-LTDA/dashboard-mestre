@@ -1044,11 +1044,11 @@ export const SolicitacaoBrindes: React.FC = () => {
             MODAL: ADMIN ACTIONS (APPROVE/REJECT)
             ======================================================== */}
         {showActionModal && selectedRequestForAction && (
-          <div className="fixed inset-0 z-[200] overflow-y-auto bg-white/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="flex min-h-full items-start justify-center p-4 sm:items-center">
-              <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 p-6 shadow-2xl animate-in zoom-in-95 duration-200 my-auto">
+          <div className="fixed inset-0 z-[200] overflow-y-auto bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 p-5 shadow-2xl animate-in zoom-in-95 duration-200 my-auto">
               
-              <div className="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
+              <div className="flex justify-between items-start border-b border-slate-100 pb-2.5 mb-2.5">
                 <div>
                   <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#E53935]">Gestão de Estoque</span>
                   <h3 className="text-lg font-bold text-[#233A7A] font-display flex items-center gap-2 mt-1">
@@ -1063,7 +1063,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                 </button>
               </div>
 
-              <div className="space-y-4 text-xs font-semibold text-slate-500">
+              <div className="space-y-3 text-xs font-semibold text-slate-500">
                 <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl space-y-1.5 text-slate-500">
                   <p><strong>Vendedor:</strong> {selectedRequestForAction.requester_name}</p>
                   <p><strong>Empresa:</strong> {selectedRequestForAction.empresa_nome}</p>
@@ -1079,18 +1079,18 @@ export const SolicitacaoBrindes: React.FC = () => {
                     value={actionObservation}
                     onChange={e => setActionObservation(e.target.value)}
                     placeholder="Ex: Retirar no setor de Marketing com Maria..."
-                    rows={3}
-                    className="input font-medium text-slate-700 py-2 resize-none w-full"
+                    rows={2}
+                    className="input font-medium text-slate-700 py-1.5 resize-none w-full"
                   />
                 </label>
 
-                {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-2 justify-end pt-2">
+                {/* Buttons side-by-side to save height */}
+                <div className="flex gap-2 justify-end pt-1 flex-wrap">
                   <button
                     type="button"
                     onClick={() => setShowActionModal(false)}
                     disabled={actionLoading}
-                    className="h-10 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-slate-500 font-bold cursor-pointer order-last sm:order-first"
+                    className="h-9 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-slate-500 font-bold cursor-pointer"
                   >
                     Cancelar
                   </button>
@@ -1099,12 +1099,12 @@ export const SolicitacaoBrindes: React.FC = () => {
                     type="button"
                     onClick={() => handleAdminAction('recusado')}
                     disabled={actionLoading}
-                    className="h-10 px-5 rounded-xl font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="h-9 px-3 rounded-xl font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {actionLoading ? (
-                      <LoaderCircle className="animate-spin" size={14} />
+                      <LoaderCircle className="animate-spin" size={12} />
                     ) : (
-                      <><X size={14} /> Recusar</>
+                      <><X size={12} /> Recusar</>
                     )}
                   </button>
 
@@ -1112,12 +1112,12 @@ export const SolicitacaoBrindes: React.FC = () => {
                     type="button"
                     onClick={() => handleAdminAction('enviado')}
                     disabled={actionLoading}
-                    className="h-10 px-5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md hover:scale-[1.02] active:scale-[0.98] transition-transform inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    className="h-9 px-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md hover:scale-[1.02] active:scale-[0.98] transition-transform inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                   >
                     {actionLoading ? (
-                      <LoaderCircle className="animate-spin" size={14} />
+                      <LoaderCircle className="animate-spin" size={12} />
                     ) : (
-                      <><Check size={14} /> Liberar e Enviar</>
+                      <><Check size={12} /> Liberar</>
                     )}
                   </button>
                 </div>
