@@ -335,7 +335,7 @@ export const SolicitacaoBrindes: React.FC = () => {
             .from('notificacoes')
             .insert({
               user_id: selectedRequestForAction.user_id,
-              titulo: dbStatus === 'aprovado' ? 'Solicitação de Brinde Aprovada! 🎁' : 'Solicitação de Brinde Recusada ❌',
+              titulo: dbStatus === 'aprovado' ? 'Solicitação de Brinde Aprovada!' : 'Solicitação de Brinde Recusada',
               mensagem: `Sua solicitação de ${selectedRequestForAction.quantidade}x "${selectedRequestForAction.brinde_tipo}" foi ${dbStatus === 'aprovado' ? 'aprovada' : 'recusada'}. ${actionObservation.trim() ? `Obs: ${actionObservation.trim()}` : ''}`,
               tipo: dbStatus === 'aprovado' ? 'sucesso' : 'erro',
               lida: false
@@ -681,6 +681,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                     {filteredRequests.map(item => {
+                      const isPending = item.status === 'pendente'
                       const isSent = item.status === 'enviado' || item.status === 'aprovado' || item.status === 'entregue'
                       
                       let statusColor = 'bg-slate-100 border-slate-200 text-slate-600'
@@ -692,12 +693,12 @@ export const SolicitacaoBrindes: React.FC = () => {
                         <tr 
                           key={item.id} 
                           onClick={() => {
-                            if (!isVendedor) {
+                            if (!isVendedor && isPending) {
                               openActionModal(item)
                             }
                           }}
                           className={`transition-colors group ${
-                            !isVendedor 
+                            (!isVendedor && isPending)
                               ? 'hover:bg-amber-50/20 cursor-pointer' 
                               : 'hover:bg-slate-50/50'
                           }`}
@@ -763,7 +764,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                                 isSent ? 'bg-emerald-500' : 'bg-rose-500'
                               }`} />
                               {item.status === 'pendente' ? 'Pendente' : 
-                               isSent ? 'Enviado' : 'Recusado'}
+                               isSent ? 'Entregue' : 'Recusado'}
                             </span>
                           </td>
 
@@ -774,12 +775,16 @@ export const SolicitacaoBrindes: React.FC = () => {
 
                           {!isVendedor && (
                             <td className="p-4 text-center" onClick={e => e.stopPropagation()}>
-                              <button
-                                onClick={() => openActionModal(item)}
-                                className="px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#233A7A] hover:bg-[#233A7A]/95 transition-all shadow-sm shadow-[#233A7A]/20 cursor-pointer"
-                              >
-                                Decidir
-                              </button>
+                              {isPending ? (
+                                <button
+                                  onClick={() => openActionModal(item)}
+                                  className="px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider text-white bg-[#233A7A] hover:bg-[#233A7A]/95 transition-all shadow-sm shadow-[#233A7A]/20 cursor-pointer"
+                                >
+                                  Decidir
+                                </button>
+                              ) : (
+                                <span className="text-[10px] font-bold text-slate-400 select-none">Finalizado</span>
+                              )}
                             </td>
                           )}
 
@@ -815,12 +820,12 @@ export const SolicitacaoBrindes: React.FC = () => {
                       <div 
                         key={item.id} 
                         onClick={() => {
-                          if (!isVendedor) {
+                          if (!isVendedor && item.status === 'pendente') {
                             openActionModal(item)
                           }
                         }}
                         className={`bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-3 ${
-                          !isVendedor ? 'cursor-pointer hover:border-amber-250 bg-amber-50/5' : ''
+                          (!isVendedor && item.status === 'pendente') ? 'cursor-pointer hover:border-amber-250 bg-amber-50/5' : ''
                         }`}
                       >
                         {/* Header: Date & Status */}
@@ -832,7 +837,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                           <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-bold text-[9px] uppercase border ${statusColor}`}>
                             <span className={`h-1.5 w-1.5 rounded-full ${dotColor}`} />
                             {item.status === 'pendente' ? 'Pendente' : 
-                             isSent ? 'Enviado' : 'Recusado'}
+                             isSent ? 'Entregue' : 'Recusado'}
                           </span>
                         </div>
 
@@ -891,7 +896,7 @@ export const SolicitacaoBrindes: React.FC = () => {
                         )}
 
                         {/* Mobile Action Button for Admin */}
-                        {!isVendedor && (
+                        {!isVendedor && item.status === 'pendente' && (
                           <div className="border-t border-slate-100 pt-3 mt-1">
                             <button
                               type="button"
