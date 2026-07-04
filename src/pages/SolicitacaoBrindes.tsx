@@ -1044,86 +1044,105 @@ export const SolicitacaoBrindes: React.FC = () => {
             MODAL: ADMIN ACTIONS (APPROVE/REJECT)
             ======================================================== */}
         {showActionModal && selectedRequestForAction && (
-          <div className="fixed inset-0 z-[200] overflow-y-auto bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="flex min-h-full items-center justify-center p-4">
-              <div className="w-full max-w-md rounded-2xl bg-white border border-slate-200 p-5 shadow-2xl animate-in zoom-in-95 duration-200 my-auto">
+          <div className="fixed inset-0 z-[200] bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200 flex justify-end">
+            {/* Backdrop close click wrapper */}
+            <div className="absolute inset-0 cursor-pointer" onClick={() => setShowActionModal(false)} />
+            
+            {/* Slide-over Drawer Panel */}
+            <div className="relative w-full max-w-md h-full bg-white shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-300">
               
-              <div className="flex justify-between items-start border-b border-slate-100 pb-2.5 mb-2.5">
+              {/* Header */}
+              <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                 <div>
                   <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#E53935]">Gestão de Estoque</span>
-                  <h3 className="text-lg font-bold text-[#233A7A] font-display flex items-center gap-2 mt-1">
+                  <h3 className="text-xl font-extrabold text-[#233A7A] font-display mt-0.5">
                     Liberar Brinde
                   </h3>
                 </div>
                 <button
                   onClick={() => setShowActionModal(false)}
-                  className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="h-8 w-8 rounded-lg hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 transition-colors flex items-center justify-center cursor-pointer border border-slate-200/40"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              <div className="space-y-3 text-xs font-semibold text-slate-500">
-                <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl space-y-1.5 text-slate-500">
-                  <p><strong>Vendedor:</strong> {selectedRequestForAction.requester_name}</p>
-                  <p><strong>Empresa:</strong> {selectedRequestForAction.empresa_nome}</p>
-                  <p><strong>Item Solicitado:</strong> {selectedRequestForAction.brinde_tipo} (x{selectedRequestForAction.quantidade})</p>
+              {/* Scrollable Content Body */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                
+                {/* Details Box */}
+                <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-2xl space-y-3.5 text-xs font-semibold text-slate-500">
+                  <div className="flex items-center justify-between border-b border-slate-200/40 pb-2.5">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-wider font-extrabold">Informações da Solicitação</span>
+                    <span className="px-2 py-0.5 rounded-md bg-[#233A7A]/10 text-[#233A7A] text-[9px] font-bold">
+                      {selectedRequestForAction.status.toUpperCase()}
+                    </span>
+                  </div>
+                  <p className="flex justify-between"><strong>Vendedor:</strong> <span className="text-slate-800 font-bold">{selectedRequestForAction.requester_name}</span></p>
+                  <p className="flex justify-between"><strong>Empresa:</strong> <span className="text-slate-800 font-bold">{selectedRequestForAction.empresa_nome}</span></p>
+                  <p className="flex justify-between"><strong>Item Solicitado:</strong> <span className="text-slate-800 font-bold">{selectedRequestForAction.brinde_tipo}</span></p>
+                  <p className="flex justify-between"><strong>Quantidade:</strong> <span className="text-[#233A7A] font-mono font-bold text-sm">x{selectedRequestForAction.quantidade}</span></p>
                   {selectedRequestForAction.justificativa && (
-                    <p><strong>Justificativa:</strong> <span className="italic">"{selectedRequestForAction.justificativa}"</span></p>
+                    <div className="pt-2 border-t border-slate-200/40 mt-2 space-y-1">
+                      <strong className="text-slate-400 block text-[10px] uppercase font-extrabold">Justificativa:</strong>
+                      <p className="text-slate-700 italic font-medium leading-relaxed bg-white border border-slate-100 p-2.5 rounded-xl">
+                        "{selectedRequestForAction.justificativa}"
+                      </p>
+                    </div>
                   )}
                 </div>
 
+                {/* Input block */}
                 <label className="block">
-                  <span className="block mb-1.5">Observação ou Instrução de Entrega (Opcional)</span>
+                  <span className="block mb-2 text-xs font-bold text-slate-600">Observação ou Instrução de Entrega (Opcional)</span>
                   <textarea
                     value={actionObservation}
                     onChange={e => setActionObservation(e.target.value)}
                     placeholder="Ex: Retirar no setor de Marketing com Maria..."
-                    rows={2}
-                    className="input font-medium text-slate-700 py-1.5 resize-none w-full"
+                    rows={4}
+                    className="input font-medium text-slate-750 py-2.5 resize-none w-full border-slate-250 focus:border-[#233A7A]"
                   />
                 </label>
-
-                {/* Buttons side-by-side to save height */}
-                <div className="flex gap-2 justify-end pt-1 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={() => setShowActionModal(false)}
-                    disabled={actionLoading}
-                    className="h-9 px-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-slate-500 font-bold cursor-pointer"
-                  >
-                    Cancelar
-                  </button>
-                  
-                  <button
-                    type="button"
-                    onClick={() => handleAdminAction('recusado')}
-                    disabled={actionLoading}
-                    className="h-9 px-3 rounded-xl font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
-                  >
-                    {actionLoading ? (
-                      <LoaderCircle className="animate-spin" size={12} />
-                    ) : (
-                      <><X size={12} /> Recusar</>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleAdminAction('enviado')}
-                    disabled={actionLoading}
-                    className="h-9 px-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md hover:scale-[1.02] active:scale-[0.98] transition-transform inline-flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
-                  >
-                    {actionLoading ? (
-                      <LoaderCircle className="animate-spin" size={12} />
-                    ) : (
-                      <><Check size={12} /> Liberar</>
-                    )}
-                  </button>
-                </div>
               </div>
 
+              {/* Fixed Footer with buttons */}
+              <div className="p-6 border-t border-slate-100 bg-slate-50/30 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowActionModal(false)}
+                  disabled={actionLoading}
+                  className="flex-1 h-11 rounded-xl border border-slate-250 hover:bg-slate-50 transition-colors text-slate-600 font-bold text-xs cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => handleAdminAction('recusado')}
+                  disabled={actionLoading}
+                  className="flex-1 h-11 rounded-xl font-bold text-rose-600 border border-rose-250 hover:bg-rose-50 transition-colors inline-flex items-center justify-center gap-2 text-xs cursor-pointer disabled:opacity-50"
+                >
+                  {actionLoading ? (
+                    <LoaderCircle className="animate-spin" size={14} />
+                  ) : (
+                    <><X size={14} /> Recusar</>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleAdminAction('enviado')}
+                  disabled={actionLoading}
+                  className="flex-1 h-11 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-md inline-flex items-center justify-center gap-2 text-xs cursor-pointer disabled:opacity-50"
+                >
+                  {actionLoading ? (
+                    <LoaderCircle className="animate-spin" size={14} />
+                  ) : (
+                    <><Check size={14} /> Liberar</>
+                  )}
+                </button>
               </div>
+
             </div>
           </div>
         )}
