@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import type { Session, User } from '@supabase/supabase-js'
+import { useToast } from './ToastContext'
 
 export type UserCargo = 'admin' | 'gestor' | 'sup_tecnico' | 'tecnico' | 'funcionario' | 'cliente' | 'vendedor'
 
@@ -19,12 +20,46 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { showToast } = useToast()
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [cargo, setCargo] = useState<UserCargo | null>(null)
   const [fullName, setFullName] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [isAuthorized, setIsAuthorized] = useState<boolean>(true)
+
+  // Monitoramento de inatividade para auto-logout (15 minutos)
+  useEffect(() => {
+    if (!user) return
+
+    let inactivityTimeout: any
+
+    const resetInactivityTimer = () => {
+      if (inactivityTimeout) clearTimeout(inactivityTimeout)
+      
+      // 15 minutos = 15 * 60 * 1000 ms
+      inactivityTimeout = setTimeout(async () => {
+        console.log('Usuário deslogado por inatividade.')
+        await signOut()
+        showToast('Sua sessão expirou devido à inatividade. Faça login novamente.', 'info')
+      }, 15 * 60 * 1000)
+    }
+
+    const activityEvents = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart']
+    
+    resetInactivityTimer()
+
+    activityEvents.forEach(event => {
+      window.addEventListener(event, resetInactivityTimer)
+    })
+
+    return () => {
+      if (inactivityTimeout) clearTimeout(inactivityTimeout)
+      activityEvents.forEach(event => {
+        window.removeEventListener(event, resetInactivityTimer)
+      })
+    }
+  }, [user])
 
   async function logAccessAttempt(userId: string | null, email: string, userCargo: string | null, status: 'sucesso' | 'negado') {
     try {

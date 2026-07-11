@@ -60,6 +60,20 @@ export const Login: React.FC = () => {
       return
     }
 
+    // Rate Limit Check
+    const attemptsKey = 'domestre.login_attempts'
+    const lockKey = 'domestre.login_lock_until'
+    const now = Date.now()
+    const lockUntil = localStorage.getItem(lockKey)
+
+    if (lockUntil && now < Number(lockUntil)) {
+      const remainingMinutes = Math.ceil((Number(lockUntil) - now) / 60000)
+      const msg = `Muitas tentativas incorretas. Login temporariamente bloqueado por segurança. Tente novamente em ${remainingMinutes} minuto(s).`
+      setErrorMessage(msg)
+      showToast(msg, 'error')
+      return
+    }
+
     setIsSubmitting(true)
     try {
       // Map username to email under the hood if it is not already an email
@@ -68,6 +82,10 @@ export const Login: React.FC = () => {
         : `${cleanUsername}@domestre.com`
 
       await signIn(emailToAuth, password)
+
+      // Limpa os limites de tentativas após login bem-sucedido
+      localStorage.removeItem(attemptsKey)
+      localStorage.removeItem(lockKey)
 
       // Handle remember me persistence
       if (rememberMe) {
@@ -82,11 +100,27 @@ export const Login: React.FC = () => {
       navigate(from, { replace: true })
     } catch (err: any) {
       const errMsg = err.message || 'Falha no login'
-      const translatedMsg = errMsg.toLowerCase().includes('invalid') 
-        ? 'Usuário ou senha incorretos' 
-        : errMsg
-      setErrorMessage(translatedMsg)
-      showToast(translatedMsg, 'error')
+      
+      // Incrementa a contagem de falhas
+      const attempts = Number(localStorage.getItem(attemptsKey) || 0) + 1
+      localStorage.setItem(attemptsKey, String(attempts))
+
+      if (attempts >= 5) {
+        const lockDuration = 5 * 60 * 1000 // 5 minutos de bloqueio
+        localStorage.setItem(lockKey, String(now + lockDuration))
+        localStorage.removeItem(attemptsKey)
+        const blockMsg = 'Muitas tentativas incorretas. O login foi bloqueado por 5 minutos para proteger a conta.'
+        setErrorMessage(blockMsg)
+        showToast(blockMsg, 'error')
+      } else {
+        const remaining = 5 - attempts
+        const isInvalid = errMsg.toLowerCase().includes('invalid')
+        const translatedMsg = isInvalid
+          ? `Usuário ou senha incorretos (${remaining} tentativa(s) restante(s))`
+          : `${errMsg} (${remaining} tentativa(s) restante(s))`
+        setErrorMessage(translatedMsg)
+        showToast(translatedMsg, 'error')
+      }
     } finally {
       setIsSubmitting(false)
     }
