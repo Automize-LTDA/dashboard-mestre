@@ -23,10 +23,9 @@ export default async function handler(req, res) {
   try {
     const { to_email, month_year, stats_avarias, stats_visitas, stats_empresas, stats_usuarios, stats_brindes } = req.body
 
-    // NOTA PARA O USUÁRIO: Coloque sua Senha de Aplicativo (16 letras) gerada no Google abaixo.
-    // Nunca use a senha normal do seu email, apenas a App Password!
+    // Credenciais do Gmail
     const GMAIL_EMAIL = process.env.GMAIL_EMAIL || "automizesistemas@gmail.com"
-    const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || "SUA_SENHA_DE_APLICATIVO_AQUI"
+    const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || "joulsmdjrfudofnz"
 
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
@@ -81,10 +80,6 @@ export default async function handler(req, res) {
         pass: GMAIL_APP_PASSWORD
       }
     });
-
-    if (GMAIL_APP_PASSWORD === "SUA_SENHA_DE_APLICATIVO_AQUI") {
-      throw new Error("Senha de aplicativo não configurada. Configure o GMAIL_APP_PASSWORD no Vercel ou no código fonte.");
-    }
 
     const info = await transporter.sendMail({
       from: `"Do Mestre" <${GMAIL_EMAIL}>`, // Remetente
