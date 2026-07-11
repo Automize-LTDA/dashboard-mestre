@@ -15,7 +15,7 @@ import {
   ArrowRight
 } from 'lucide-react'
 import logoUrl from '../assets/logo.png'
-import sideImgUrl from '../assets/login-side.png'
+import sideImgUrl from '../assets/login-side.jpg'
 
 export const Login: React.FC = () => {
   const { signIn, user, loading } = useAuth()
