@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
-import emailjs from '@emailjs/browser'
 import { supabase } from '../supabaseClient'
 import { Layout } from '../components/Layout'
 import { useToast } from '../context/ToastContext'
@@ -200,15 +199,7 @@ export const Relatorios: React.FC = () => {
     }
     if (!monthlyData) return
 
-    // EmailJS Keys from env or placeholders
-    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_domestre'
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_domestre'
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || ''
-
-    if (!publicKey) {
-      showToast('Para envio real, configure as chaves do EmailJS em seu arquivo .env.', 'info')
-    }
-
+    // Removemos os requisitos de chave do client-side pois isso roda no servidor
     setEmailSendingStatus('consolidating')
     setSendingProgress(10)
     setStatusMessage('Consolidando métricas do banco de dados...')
@@ -216,32 +207,31 @@ export const Relatorios: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 800))
     setEmailSendingStatus('compiling')
     setSendingProgress(40)
-    setStatusMessage('Compilando dados em anexo PDF...')
+    setStatusMessage('Preparando dados para envio via Resend...')
 
     // No PDF generation needed for free tier (avoids 50KB payload limit)
 
     await new Promise(resolve => setTimeout(resolve, 800))
     setEmailSendingStatus('sending')
     setSendingProgress(75)
-    setStatusMessage(`Enviando resumo via EmailJS para ${emailRecipient}...`)
+    setStatusMessage(`Enviando resumo via Resend para ${emailRecipient}...`)
 
     try {
-      if (publicKey) {
-        const templateParams = {
-          to_email: emailRecipient,
-          month_year: `${monthsNames[selectedMonth]} / ${selectedYear}`,
-          stats_avarias: monthlyData.stats.totalAvarias,
-          stats_visitas: monthlyData.stats.totalVisitas,
-          stats_empresas: monthlyData.stats.totalEmpresas,
-          stats_usuarios: monthlyData.stats.totalUsuarios,
-          stats_brindes: `${monthlyData.stats.totalBrindes} (${monthlyData.stats.totalBrindesItens})`
-        }
-
-        await emailjs.send(serviceId, templateId, templateParams, publicKey)
-      } else {
-        // Fallback simulated wait if keys aren't set up yet
-        await new Promise(resolve => setTimeout(resolve, 1500))
+      const templateParams = {
+        to_email: emailRecipient,
+        month_year: `${monthsNames[selectedMonth]} / ${selectedYear}`,
+        stats_avarias: monthlyData.stats.totalAvarias,
+        stats_visitas: monthlyData.stats.totalVisitas,
+        stats_empresas: monthlyData.stats.totalEmpresas,
+        stats_usuarios: monthlyData.stats.totalUsuarios,
+        stats_brindes: `${monthlyData.stats.totalBrindes} (${monthlyData.stats.totalBrindesItens})`
       }
+
+      const { error } = await supabase.functions.invoke('send-report', {
+        body: templateParams
+      })
+
+      if (error) throw error
 
       setSendingProgress(100)
 
