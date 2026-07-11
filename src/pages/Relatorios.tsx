@@ -236,8 +236,17 @@ export const Relatorios: React.FC = () => {
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Erro ao enviar email')
+        let errorMsg = 'Erro ao enviar email'
+        try {
+          const errorText = await response.text()
+          if (errorText) {
+            const errorData = JSON.parse(errorText)
+            errorMsg = errorData.error || errorMsg
+          }
+        } catch (e) {
+          console.error('Error parsing response:', e)
+        }
+        throw new Error(errorMsg)
       }
 
       setSendingProgress(100)

@@ -56,7 +56,13 @@ export default async function handler(req, res) {
       }),
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    let data = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (e) {
+      console.error("Failed to parse Resend response:", text);
+    }
 
     if (response.ok) {
       res.status(200).json(data)
