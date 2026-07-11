@@ -227,11 +227,18 @@ export const Relatorios: React.FC = () => {
         stats_brindes: `${monthlyData.stats.totalBrindes} (${monthlyData.stats.totalBrindesItens})`
       }
 
-      const { error } = await supabase.functions.invoke('send-report', {
-        body: templateParams
+      const response = await fetch('/api/send-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(templateParams)
       })
 
-      if (error) throw error
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Erro ao enviar email')
+      }
 
       setSendingProgress(100)
 

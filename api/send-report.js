@@ -1,24 +1,28 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// api/send-report.js
+export default async function handler(req, res) {
+  // Configuração de CORS para permitir chamadas do frontend
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  )
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const { to_email, month_year, stats_avarias, stats_visitas, stats_empresas, stats_usuarios, stats_brindes } = await req.json();
+    const { to_email, month_year, stats_avarias, stats_visitas, stats_empresas, stats_usuarios, stats_brindes } = req.body
 
-    if (!RESEND_API_KEY) {
-      throw new Error("RESEND_API_KEY is not set.");
-    }
+    // Utilizando a API Key do Resend solicitada
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_AeSM4Wxb_HcBCwkCoMokYDAGsu37yMadD"
 
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -38,13 +42,11 @@ serve(async (req) => {
       </div>
     `;
 
-    // Note: Em produção, substitua "noreply@seu-dominio.com" pelo domínio validado no Resend
-    // Por padrão o Resend permite testes com onboarding@resend.dev para o próprio email da conta se o domínio não estiver verificado
-    const res = await fetch("https://api.resend.com/emails", {
+    const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
         from: "Do Mestre <onboarding@resend.dev>",
@@ -54,16 +56,14 @@ serve(async (req) => {
       }),
     });
 
-    const data = await res.json();
+    const data = await response.json();
 
-    return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: res.ok ? 200 : 400,
-    });
+    if (response.ok) {
+      res.status(200).json(data)
+    } else {
+      res.status(400).json(data)
+    }
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    res.status(500).json({ error: error.message })
   }
-});
+}
