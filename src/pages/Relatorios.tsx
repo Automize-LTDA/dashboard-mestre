@@ -1188,6 +1188,15 @@ export const Relatorios: React.FC = () => {
                     </span>
                   </div>
 
+                  {emailSendingStatus === 'success' && (
+                    <div className="mt-2 pt-2 border-t border-slate-200/60 flex items-start gap-2 text-amber-700 font-medium text-[11px] leading-relaxed">
+                      <Info size={14} className="shrink-0 mt-0.5 text-amber-600" />
+                      <span>
+                        O e-mail pode ser direcionado para a pasta de <strong>Spam ou Lixo Eletrônico</strong>. Verifique lá se não o encontrar na caixa de entrada.
+                      </span>
+                    </div>
+                  )}
+
                 </div>
 
                 {/* Status Message Text */}
