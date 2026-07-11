@@ -268,8 +268,8 @@ export const Relatorios: React.FC = () => {
       })
 
       setEmailSendingStatus('success')
-      setStatusMessage('E-mail enviado com sucesso!')
-      showToast(`Relatório mensal enviado com sucesso para ${emailRecipient}!`, 'success')
+      setStatusMessage('E-mail enviado! Verifique também a caixa de Spam.')
+      showToast(`Relatório mensal enviado com sucesso para ${emailRecipient}! Verifique também a caixa de Spam.`, 'success')
       setEmailRecipient('') // Clear email input on success
     } catch (err: any) {
       console.error(err)

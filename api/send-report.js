@@ -45,11 +45,9 @@ export default async function handler(req, res) {
     <div style="height: 1px; background-color: #f1f5f9; margin: 0 30px;"></div>
     <!-- Conteúdo do E-mail -->
     <div style="padding: 24px 30px;">
-      <p style="margin-top: 0; font-size: 15px; color: #334155; font-weight: 500;">Olá,</p>
-      <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 24px;">
-        O resumo consolidado das atividades do sistema correspondente ao período de 
+      <p style="margin-top: 0; font-size: 15px; color: #334155; font-weight: 500;">Olá, O resumo consolidado das atividades do sistema correspondente ao período de 
         <strong style="color: #1E2E5C; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px;">${month_year}</strong> 
-        já está disponível. Confira abaixo os números consolidados deste mês:
+        já está disponível. Confira abaixo os números consolidados deste mês:</p>
       </p>
       
       <!-- Seção de Indicadores em Grid (Cards) -->
