@@ -1,4 +1,6 @@
 // api/send-report.js
+import nodemailer from 'nodemailer'
+
 export default async function handler(req, res) {
   // Configuração de CORS para permitir chamadas do frontend
   res.setHeader('Access-Control-Allow-Credentials', true)
@@ -21,8 +23,10 @@ export default async function handler(req, res) {
   try {
     const { to_email, month_year, stats_avarias, stats_visitas, stats_empresas, stats_usuarios, stats_brindes } = req.body
 
-    // Utilizando a API Key do Resend solicitada
-    const RESEND_API_KEY = process.env.RESEND_API_KEY || "re_AeSM4Wxb_HcBCwkCoMokYDAGsu37yMadD"
+    // NOTA PARA O USUÁRIO: Coloque sua Senha de Aplicativo (16 letras) gerada no Google abaixo.
+    // Nunca use a senha normal do seu email, apenas a App Password!
+    const GMAIL_EMAIL = process.env.GMAIL_EMAIL || "automizesistemas@gmail.com"
+    const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || "SUA_SENHA_DE_APLICATIVO_AQUI"
 
     const htmlContent = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
@@ -33,29 +37,29 @@ export default async function handler(req, res) {
         
         <div style="padding: 40px 30px;">
           <h2 style="color: #0f172a; font-size: 20px; margin-top: 0;">Olá,</h2>
-          <p style="color: #475569; font-size: 15px; line-height: 1.6;">Segue abaixo o resumo consolidado das atividades referente a <strong>\${month_year}</strong>.</p>
+          <p style="color: #475569; font-size: 15px; line-height: 1.6;">Segue abaixo o resumo consolidado das atividades referente a <strong>${month_year}</strong>.</p>
           
           <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0;">
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 500;">Visitas a Filiais</td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-weight: bold;">\${stats_visitas}</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-weight: bold;">${stats_visitas}</td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 500;">Avarias Registradas</td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #e11d48; font-weight: bold;">\${stats_avarias}</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #e11d48; font-weight: bold;">${stats_avarias}</td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 500;">Novas Empresas</td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-weight: bold;">\${stats_empresas}</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-weight: bold;">${stats_empresas}</td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 500;">Novos Usuários</td>
-                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-weight: bold;">\${stats_usuarios}</td>
+                <td style="padding: 12px 0; border-bottom: 1px solid #e2e8f0; text-align: right; color: #0f172a; font-weight: bold;">${stats_usuarios}</td>
               </tr>
               <tr>
                 <td style="padding: 12px 0; color: #475569; font-weight: 500;">Solicitações de Brindes</td>
-                <td style="padding: 12px 0; text-align: right; color: #16a34a; font-weight: bold;">\${stats_brindes}</td>
+                <td style="padding: 12px 0; text-align: right; color: #16a34a; font-weight: bold;">${stats_brindes}</td>
               </tr>
             </table>
           </div>
@@ -69,34 +73,29 @@ export default async function handler(req, res) {
       </div>
     `;
 
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: "Do Mestre <onboarding@resend.dev>",
-        to: [to_email],
-        subject: `Relatório Mensal Do Mestre - ${month_year}`,
-        html: htmlContent,
-      }),
+    // Configurando o Nodemailer com o SMTP do Gmail
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: GMAIL_EMAIL,
+        pass: GMAIL_APP_PASSWORD
+      }
     });
 
-    const text = await response.text();
-    let data = {};
-    try {
-      data = text ? JSON.parse(text) : {};
-    } catch (e) {
-      console.error("Failed to parse Resend response:", text);
+    if (GMAIL_APP_PASSWORD === "SUA_SENHA_DE_APLICATIVO_AQUI") {
+      throw new Error("Senha de aplicativo não configurada. Configure o GMAIL_APP_PASSWORD no Vercel ou no código fonte.");
     }
 
-    if (response.ok) {
-      res.status(200).json(data)
-    } else {
-      res.status(400).json({ error: data.message || text || 'Erro desconhecido na API do Resend' })
-    }
+    const info = await transporter.sendMail({
+      from: `"Do Mestre" <${GMAIL_EMAIL}>`, // Remetente
+      to: to_email, // Destinatário
+      subject: `Relatório Mensal Do Mestre - ${month_year}`,
+      html: htmlContent, // O Corpo do Email (Template)
+    });
+
+    res.status(200).json({ success: true, messageId: info.messageId });
   } catch (error) {
-    res.status(500).json({ error: error.message || 'Erro interno no servidor' })
+    // Retornamos os erros do Nodemailer formatados
+    res.status(500).json({ error: error.message || 'Erro interno no servidor ao tentar enviar email com Nodemailer' })
   }
 }
