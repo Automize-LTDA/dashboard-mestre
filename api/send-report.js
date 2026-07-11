@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const { to_email, month_year, stats_avarias, stats_visitas, stats_empresas, stats_usuarios, stats_brindes } = req.body
 
     // Credenciais do Gmail
-    const GMAIL_EMAIL = process.env.GMAIL_EMAIL || "automizesistemas@gmail.com"
+    const GMAIL_EMAIL = process.env.GMAIL_EMAIL || "relatoriosdomestre@gmail.com"
     const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || "joulsmdjrfudofnz"
 
     const htmlContent = `
@@ -72,9 +72,11 @@ export default async function handler(req, res) {
       </div>
     `;
 
-    // Configurando o Nodemailer com o SMTP do Gmail
+    // Configurando o Nodemailer com o SMTP do Gmail (Modo Explícito)
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // true for 465, false for other ports
       auth: {
         user: GMAIL_EMAIL,
         pass: GMAIL_APP_PASSWORD
