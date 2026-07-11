@@ -179,6 +179,16 @@ export const DashboardHome: React.FC = () => {
       const brindesRecusados = brindes.filter((b: any) => b.status === 'recusado').length
       const brindesEntregues = brindes.filter((b: any) => b.status === 'entregue').length
 
+      // Contagem física de quantos itens/brindes foram realmente entregues (soma da coluna quantidade)
+      const totalItensDistribuidos = brindes
+        .filter((b: any) => b.status === 'entregue')
+        .reduce((acc: number, b: any) => acc + (Number(b.quantidade) || 1), 0)
+
+      // Contagem física de quantos itens/brindes foram realmente entregues neste mês atual
+      const itensDistribuidosMes = brindes
+        .filter((b: any) => b.status === 'entregue' && new Date(b.created_at).getMonth() === now.getMonth() && new Date(b.created_at).getFullYear() === now.getFullYear())
+        .reduce((acc: number, b: any) => acc + (Number(b.quantidade) || 1), 0)
+
       // Chart G: Brindes por tipo
       const tipoMap: Record<string, number> = {}
       brindes.forEach((b: any) => {
@@ -198,11 +208,17 @@ export const DashboardHome: React.FC = () => {
         { name: 'Recusadas', value: brindesRecusados, color: '#E53935' }
       ].filter(s => s.value > 0)
 
-      // Chart I: Solicitações por mês (line)
-      const brindesPorMesChart = months.map((m, idx) => ({
-        name: m,
-        Solicitações: brindes.filter((b: any) => new Date(b.created_at).getMonth() === idx).length
-      })).slice(0, now.getMonth() + 1)
+      // Chart I: Solicitações por mês e total distribuído mensalmente
+      const brindesPorMesChart = months.map((m, idx) => {
+        const monthlyGifts = brindes.filter((b: any) => new Date(b.created_at).getMonth() === idx)
+        return {
+          name: m,
+          Solicitações: monthlyGifts.length,
+          "Itens Distribuídos": monthlyGifts
+            .filter((b: any) => b.status === 'entregue')
+            .reduce((acc: number, b: any) => acc + (Number(b.quantidade) || 1), 0)
+        }
+      }).slice(0, now.getMonth() + 1)
 
       // 4. Calculate Promoter stats
       const roleMap = new Map<string, string>()
@@ -270,6 +286,8 @@ export const DashboardHome: React.FC = () => {
         brindesPendentes,
         brindesAprovados,
         brindesRecusados,
+        totalItensDistribuidos,
+        itensDistribuidosMes,
         brindesPorTipoChart,
         brindesStatusChart,
         brindesPorMesChart
@@ -346,6 +364,8 @@ export const DashboardHome: React.FC = () => {
     brindesPendentes: 9,
     brindesAprovados: 30,
     brindesRecusados: 8,
+    totalItensDistribuidos: 162,
+    itensDistribuidosMes: 30,
     brindesPorTipoChart: [
       { name: 'Camiseta Do Mestre', value: 22 },
       { name: 'Caneta Ecológica', value: 18 },
@@ -362,12 +382,12 @@ export const DashboardHome: React.FC = () => {
       { name: 'Recusadas', value: 8, color: '#E53935' }
     ],
     brindesPorMesChart: [
-      { name: 'Jan', Solicitações: 4 },
-      { name: 'Fev', Solicitações: 7 },
-      { name: 'Mar', Solicitações: 9 },
-      { name: 'Abr', Solicitações: 6 },
-      { name: 'Mai', Solicitações: 12 },
-      { name: 'Jun', Solicitações: 9 }
+      { name: 'Jan', Solicitações: 4, "Itens Distribuídos": 12 },
+      { name: 'Fev', Solicitações: 7, "Itens Distribuídos": 25 },
+      { name: 'Mar', Solicitações: 9, "Itens Distribuídos": 32 },
+      { name: 'Abr', Solicitações: 6, "Itens Distribuídos": 18 },
+      { name: 'Mai', Solicitações: 12, "Itens Distribuídos": 45 },
+      { name: 'Jun', Solicitações: 9, "Itens Distribuídos": 30 }
     ]
   } : (dashboardData || {
     totalReports: 0,
@@ -389,6 +409,8 @@ export const DashboardHome: React.FC = () => {
     brindesPendentes: 0,
     brindesAprovados: 0,
     brindesRecusados: 0,
+    totalItensDistribuidos: 0,
+    itensDistribuidosMes: 0,
     brindesPorTipoChart: [],
     brindesStatusChart: [],
     brindesPorMesChart: []
@@ -766,8 +788,8 @@ export const DashboardHome: React.FC = () => {
             ======================================================== */}
         {activeTab === 'brindes' && (
           <div className="space-y-8 animate-fade-in">
-            {/* METRICS GRID FOR BRINDES (5 Cards) */}
-            <section className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {/* METRICS GRID FOR BRINDES (6 Cards) */}
+            <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               <StatCard
                 label="Total Solicitado"
                 value={displayData.totalBrindes}
@@ -796,21 +818,30 @@ export const DashboardHome: React.FC = () => {
               />
 
               <StatCard
-                label="Brindes Entregues"
-                value={displayData.brindesAprovados - displayData.brindesPendentes - displayData.brindesRecusados < 0 ? 0 : displayData.brindesAprovados - displayData.brindesPendentes}
-                icon={Gift}
-                loading={isLoading}
-                iconBgClass="bg-teal-50"
-                iconColorClass="text-teal-500"
-              />
-
-              <StatCard
                 label="Solicitações Recusadas"
                 value={displayData.brindesRecusados}
                 icon={AlertCircle}
                 loading={isLoading}
                 iconBgClass="bg-rose-50"
                 iconColorClass="text-[#E53935]"
+              />
+
+              <StatCard
+                label="Total Distribuído (Itens)"
+                value={displayData.totalItensDistribuidos}
+                icon={Gift}
+                loading={isLoading}
+                iconBgClass="bg-teal-50"
+                iconColorClass="text-teal-600"
+              />
+
+              <StatCard
+                label="Distribuídos este Mês"
+                value={displayData.itensDistribuidosMes}
+                icon={Calendar}
+                loading={isLoading}
+                iconBgClass="bg-purple-50"
+                iconColorClass="text-purple-600"
               />
             </section>
 
@@ -883,7 +914,7 @@ export const DashboardHome: React.FC = () => {
               <div className="bg-white p-5 border border-slate-200 rounded-2xl shadow-[var(--shadow-soft)] flex flex-col min-h-[340px] w-full min-w-0 overflow-hidden">
                 <div className="mb-4">
                   <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider font-display">Evolução Mensal de Brindes</h3>
-                  <p className="text-[10px] text-slate-400">Número de solicitações abertas a cada mês.</p>
+                  <p className="text-[10px] text-slate-400">Solicitações versus itens distribuídos a cada mês.</p>
                 </div>
                 <div className="flex-1 text-xs">
                   <ResponsiveContainer width="100%" height="100%">
@@ -896,6 +927,10 @@ export const DashboardHome: React.FC = () => {
                           <stop offset="5%" stopColor="#10b981" stopOpacity={0.25}/>
                           <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                         </linearGradient>
+                        <linearGradient id="colorDistribEvol" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#233A7A" stopOpacity={0.25}/>
+                          <stop offset="95%" stopColor="#233A7A" stopOpacity={0}/>
+                        </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                       <XAxis dataKey="name" stroke="#94a3b8" fontSize={9} />
@@ -905,11 +940,21 @@ export const DashboardHome: React.FC = () => {
                         type="monotone"
                         dataKey="Solicitações"
                         stroke="#10b981"
-                        strokeWidth={2.5}
+                        strokeWidth={2}
                         fillOpacity={1}
                         fill="url(#colorBrindesEvol)"
                         name="Solicitações"
-                        activeDot={{ r: 5, strokeWidth: 0, fill: '#10b981' }}
+                        activeDot={{ r: 4, strokeWidth: 0, fill: '#10b981' }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="Itens Distribuídos"
+                        stroke="#233A7A"
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        fill="url(#colorDistribEvol)"
+                        name="Itens Distribuídos"
+                        activeDot={{ r: 4, strokeWidth: 0, fill: '#233A7A' }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
