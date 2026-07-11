@@ -240,8 +240,16 @@ export const Relatorios: React.FC = () => {
         try {
           const errorText = await response.text()
           if (errorText) {
-            const errorData = JSON.parse(errorText)
-            errorMsg = errorData.error || errorMsg
+            try {
+              const errorData = JSON.parse(errorText)
+              errorMsg = errorData.error || errorData.message || errorMsg
+            } catch (e) {
+              if (errorText.includes('<html') || errorText.includes('<!DOCTYPE')) {
+                errorMsg = 'A API não foi encontrada (retornou HTML). Isso acontece se estiver testando localmente sem o Vercel CLI. Teste em produção!'
+              } else {
+                errorMsg = `Erro inesperado: ${errorText.substring(0, 50)}...`
+              }
+            }
           }
         } catch (e) {
           console.error('Error parsing response:', e)
