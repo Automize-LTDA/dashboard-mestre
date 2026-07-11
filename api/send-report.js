@@ -48,7 +48,7 @@ export default async function handler(req, res) {
       <p style="margin-top: 0; font-size: 15px; color: #334155; font-weight: 500;">Olá,</p>
       <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 24px;">
         O resumo consolidado das atividades do sistema correspondente ao período de 
-        <strong style="color: #1E2E5C; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px;">\${month_year}</strong> 
+        <strong style="color: #1E2E5C; background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px;">${month_year}</strong> 
         já está disponível. Confira abaixo os números consolidados deste mês:
       </p>
       
@@ -62,13 +62,13 @@ export default async function handler(req, res) {
             <td style="width: 50%; padding-right: 6px;">
               <div style="padding: 16px; background-color: #fff8f8; border: 1px solid #fee2e2; border-radius: 12px; text-align: center;">
                 <span style="display: block; font-size: 9px; font-weight: bold; color: #e53935; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Novas Avarias</span>
-                <strong style="font-size: 24px; color: #e53935; font-weight: 800;">\${stats_avarias}</strong>
+                <strong style="font-size: 24px; color: #e53935; font-weight: 800;">${stats_avarias}</strong>
               </div>
             </td>
             <td style="width: 50%; padding-left: 6px;">
               <div style="padding: 16px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; text-align: center;">
                 <span style="display: block; font-size: 9px; font-weight: bold; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Visitas Comerciais</span>
-                <strong style="font-size: 24px; color: #1E2E5C; font-weight: 800;">\${stats_visitas}</strong>
+                <strong style="font-size: 24px; color: #1E2E5C; font-weight: 800;">${stats_visitas}</strong>
               </div>
             </td>
           </tr>
@@ -79,19 +79,19 @@ export default async function handler(req, res) {
             <td style="width: 33.33%; padding-right: 4px;">
               <div style="padding: 12px 8px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; text-align: center;">
                 <span style="display: block; font-size: 8px; font-weight: bold; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Parcerias</span>
-                <strong style="font-size: 16px; color: #475569; font-weight: 700;">\${stats_empresas}</strong>
+                <strong style="font-size: 16px; color: #475569; font-weight: 700;">${stats_empresas}</strong>
               </div>
             </td>
             <td style="width: 33.33%; padding: 0 4px;">
               <div style="padding: 12px 8px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; text-align: center;">
                 <span style="display: block; font-size: 8px; font-weight: bold; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Usuários</span>
-                <strong style="font-size: 16px; color: #475569; font-weight: 700;">\${stats_usuarios}</strong>
+                <strong style="font-size: 16px; color: #475569; font-weight: 700;">${stats_usuarios}</strong>
               </div>
             </td>
             <td style="width: 33.33%; padding-left: 4px;">
               <div style="padding: 12px 8px; background-color: #f0fdf4; border: 1px solid #dcfce7; border-radius: 12px; text-align: center;">
                 <span style="display: block; font-size: 8px; font-weight: bold; color: #16a34a; text-transform: uppercase; margin-bottom: 4px;">Brindes (Itens)</span>
-                <strong style="font-size: 16px; color: #16a34a; font-weight: 700;">\${stats_brindes}</strong>
+                <strong style="font-size: 16px; color: #16a34a; font-weight: 700;">${stats_brindes}</strong>
               </div>
             </td>
           </tr>
